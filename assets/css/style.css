@@ -74,6 +74,49 @@ header h2 {
     top: -2px;
 }
 
+.initials-btn {
+    font-size: 1rem;
+}
+
+.initials-input {
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.results-screen {
+    display: flex;
+    justify-content: center;
+}
+
+.results-content { 
+    right: 500px;
+    text-align: left;
+}
+
+.results-screen h2 {
+    font-size: 3rem;
+}
+
+.results-screen h3 {
+    font-size: 2rem;
+    font-weight: normal;
+}
+
+
+.results-submit {
+    font-weight: normal;
+    display: flex;
+}
+
+.results-submit > * {
+    padding: 5px;
+}
+
+.results-submit h3 {
+    display: inline-block;
+    font-size: 1.9rem;
+}
+
 @media screen and (max-width: 1600px) {
 
 }
