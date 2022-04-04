@@ -1,9 +1,10 @@
-const timerLength = 1;
+const timerLength = 75;
 
 highScores = [];
 
 startContainer = document.createElement("div");
 resultsContainer = document.createElement("div");
+highScoreContainer = document.createElement("div");
 questionContainer = document.createElement("div");
 
 var timer = timerLength;
@@ -12,6 +13,8 @@ var timerVar
 var currentQuestion = 0;
 
 const siteContent = document.querySelector("#site-content")
+
+var lastAnswerCorrect = "";
 
 var questionsArray = [];
 const questions = [ 
@@ -93,6 +96,7 @@ const loadHighScores = function() {
     console.log(highScores);
     
     if (!highScores){
+        highScores = [];
         return false;
     }
 
@@ -105,6 +109,7 @@ const loadHighScores = function() {
 const resetSiteContent = function() {
     startContainer.remove();
     resultsContainer.remove();
+    highScoreContainer.remove();
     questionContainer.remove();
 }
 
@@ -161,14 +166,84 @@ const displayResultsScreen = function() {
 const displayHighScores = function() {
     resetSiteContent();
 
-    highScoreContainers = document.createElement("div");
+    highScoreContainer = document.createElement("div");
+    highScoreContainer.className = "score-container";
+    highScoreContainer.innerHTML = "<h2>High scores</h2>"
 
+    scoreList = document.createElement("ul");
+    scoreList.className = "score-list";
+
+    loadHighScores();
+    for (var i = 0; i < highScores.length; i++){
+        scoreEl = document.createElement("li");
+        scoreEl.innerHTML = "<h3 class='score'>" + (i+1) + ": " + highScores[i].initials.toUpperCase() + " - " + highScores[i].score + "</h3>"
+
+        scoreList.appendChild(scoreEl);
+    }
+
+    scoreButtons = document.createElement("div");
+    scoreButtons.className = "score-buttons"
+
+    resetBtn = document.createElement("button");
+    resetBtn.className = "btn reset-btn";
+    resetBtn.textContent = "Reset High Scores"
+
+    backBtn = document.createElement("button")
+    backBtn.className = "btn back-btn";
+    backBtn.textContent = "Go Back"
+
+    scoreButtons.appendChild(resetBtn);
+    scoreButtons.appendChild(backBtn);
+
+    highScoreContainer.appendChild(scoreList);
+    highScoreContainer.appendChild(scoreButtons);
+
+    siteContent.appendChild(highScoreContainer);
 }
 
 // displays a question
 const displayQuestion = function() {
     resetSiteContent();
+
+    var curQ = questionsArray[currentQuestion];
+
+    questionContainer = document.createElement("div");
+    questionContainer.className = "question-content";
+
+    questionContainer.innerHTML = "<h2>" + curQ.question + "</h2>"
+
+    answersDiv = document.createElement("div");
+    answersDiv.className = "answers-div"
+
+    answersContainer = document.createElement("ul");
+    answersContainer.className = "answers-list"
+
+    for (var i = 0; i < curQ.answers.length; i++){
+        ansEl = document.createElement("button")
+        ansEl.className = "btn answer-btn"
+        ansEl.setAttribute("answer-id", i);
+        ansEl.textContent = (i+1) + ". " + curQ.answers[i];
+
+        answersContainer.appendChild(ansEl);
+    }
     
+    dummyDiv = document.createElement("div")
+    dummyDiv.className = "dummy"
+
+    answersDiv.appendChild(answersContainer);
+    answersDiv.appendChild(dummyDiv);
+
+    questionContainer.appendChild(answersDiv);
+
+    if (lastAnswerCorrect){
+        answerCorrectEl = document.createElement("div");
+        answerCorrectEl.className = "answer-correct";
+        answerCorrectEl.textContent = lastAnswerCorrect;
+
+        questionContainer.appendChild(answerCorrectEl)
+    }
+
+    siteContent.appendChild(questionContainer);
 }
 
 //handles the action of clicking the start button, the high score submit button, the "go back" and "clear high scores" buttons, and each answer button
@@ -179,6 +254,7 @@ const handleButtonClick = function(event) {
         console.log("Start button pressed")
         timer = timerLength;
         currentQuestion = 0;
+        lastAnswerCorrect = "";
         clearInterval(timerVar);
         timerVar = setInterval(timerCountdown, 1000);
         displayQuestion();
@@ -189,10 +265,11 @@ const handleButtonClick = function(event) {
         if (initialsValue){   
             console.log("initials submitted")
             const stats = {
-                "initials": initialsValue,
+                "initials": initialsValue.toLowerCase(),
                 "score": timer
             }
             loadHighScores();
+            console.log(highScores)
             highScores.push(stats);
             localStorage.setItem("highScores", JSON.stringify(highScores))
             displayHighScores();
@@ -201,15 +278,30 @@ const handleButtonClick = function(event) {
         }
         
     }
-    else if (event.target.matches(".go-back-btn")){
+    else if (event.target.matches(".back-btn")){
         displayStartScreen();
     }
-    else if (event.target.matches(".reset-score-btn")){
+    else if (event.target.matches(".reset-btn")){
         highScores = [];
         localStorage.setItem("highScores", "");
+        displayHighScores();
     }
     else if (event.target.matches(".answer-btn")){
-
+        console.log(event.target.getAttribute("answer-id"))
+        console.log(questionsArray[currentQuestion].correctAnswer)
+        if (parseInt(event.target.getAttribute("answer-id")) !== questionsArray[currentQuestion].correctAnswer){
+            timer = timer - 10;
+            lastAnswerCorrect = "Wrong!"
+        } else {
+            lastAnswerCorrect = "Correct!"
+        }
+        currentQuestion++;
+        if (currentQuestion >= questionsArray.length){
+            clearInterval(timerVar);
+            displayResultsScreen();
+        } else {
+            displayQuestion();
+        }
     }
 }
 
@@ -226,5 +318,5 @@ const timerCountdown = function() {
     }
 }
 
-displayResultsScreen();
+displayStartScreen();
 
