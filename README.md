@@ -5,4 +5,4 @@ Code Quiz Project for the Rutgers Coding Bootcamp
 - CSS
 - JavaScript
 ---
-This project uses JavaScript Web APIs to present a timed quiz about programming. The user is able to enter their initials, and check the high scores later
+This project uses JavaScript Web APIs to present a timed quiz about programming. Once complete, the user is able to enter their initials, then check the high scores to compare
