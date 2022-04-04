@@ -6,3 +6,8 @@ Code Quiz Project for the Rutgers Coding Bootcamp
 - JavaScript
 ---
 This project uses JavaScript Web APIs to present a timed quiz about programming. Once complete, the user is able to enter their initials, then check the high scores to compare
+
+[Link to the deployed application](owlbag.github.io/code-quiz)
+
+![screenshot](screenshot.png)
+![screenshot 2](screenshot-2.png)
